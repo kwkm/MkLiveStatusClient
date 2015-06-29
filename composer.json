@@ -1,0 +1,22 @@
+{
+    "name": "kwkm/mklivestatus-client",
+    "description": "mkLiveStatus Client",
+    "keywords": [
+        "nagios",
+        "mklivestatus"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/kwkm/mkLiveStatusClient",
+    "authors": [
+        {
+            "name": "Takehiro Kawakami",
+            "email": "take@kwkm.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Kwkm\\MkLiveStatusClient\\": "src/Kwkm/MkLiveStatusClient/"
+        }
+    }
+}
