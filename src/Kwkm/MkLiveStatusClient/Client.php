@@ -103,7 +103,7 @@ class Client
      * @return array
      * @throw \RuntimeException
      */
-    public function execute(Lql $lql = null)
+    public function execute(Lql $lql)
     {
         $this->openSocket();
         $query = $lql->build();
@@ -175,7 +175,7 @@ class Client
                 $result = socket_connect($this->socket, $this->socketAddress, $this->socketPort);
                 break;
             default:
-                $result = false;
+                throw new RuntimeException("Unsupported socket type.");
         }
 
         if (!$result) {
@@ -187,7 +187,7 @@ class Client
             socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
         }
 
-        if ($this->socketTimeout) {
+        if (count($this->socketTimeout) !== 0) {
             socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
             socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
         }
@@ -207,7 +207,7 @@ class Client
     /**
      * ソケットの読み出し
      *
-     * @param $length
+     * @param integer $length
      * @return string
      * @throw \RuntimeException
      */

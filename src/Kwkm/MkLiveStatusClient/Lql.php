@@ -29,7 +29,7 @@ class Lql
 
     /**
      * Header
-     * @var boolean
+     * @var string
      */
     protected $headers;
 
@@ -409,7 +409,7 @@ class Lql
         if (!is_string($authUser)) {
             throw new InvalidArgumentException("Argument 1 must be a string.");
         }
-        $this->authUser = sprintf("AuthUser: %s\n", $authUser);;
+        $this->authUser = sprintf("AuthUser: %s\n", $authUser);
 
         return $this;
     }
@@ -422,7 +422,7 @@ class Lql
     {
         $request = sprintf("GET %s\n", $this->table);
 
-        if ($this->columns) {
+        if (count($this->columns) !== 0) {
             $request .= sprintf("Columns: %s\n", implode(' ', $this->columns));
             $request .= $this->headers;
         }
