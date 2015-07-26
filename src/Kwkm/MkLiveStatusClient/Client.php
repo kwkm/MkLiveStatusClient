@@ -158,8 +158,6 @@ class Client
             case 'tcp':
                 $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
                 break;
-            default:
-                $this->socket = false;
         }
 
         if (!$this->socket) {
@@ -174,8 +172,6 @@ class Client
             case 'tcp':
                 $result = socket_connect($this->socket, $this->socketAddress, $this->socketPort);
                 break;
-            default:
-                throw new RuntimeException("Unsupported socket type.");
         }
 
         if (!$result) {
