@@ -97,23 +97,38 @@ class Client
     {
         switch ($this->socketType) {
             case "unix":
-                if (strlen($this->socketPath) === 0) {
-                    throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'.");
-                }
-                if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
-                    throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
-                }
+                $this->validatePropetrySocketPath();
                 break;
             case "tcp":
-                if (strlen($this->socketAddress) === 0) {
-                    throw new InvalidArgumentException("The option socketAddress must be supplied for socketType 'tcp'.");
-                }
-                if (strlen($this->socketPort) === 0) {
-                    throw new InvalidArgumentException("The option socketPort must be supplied for socketType 'tcp'.");
-                }
+                $this->validatePropetrySocketAddress();
+                $this->validatePropetrySocketPort();
                 break;
             default:
                 throw new InvalidArgumentException("Socket Type is invalid. Must be one of 'unix' or 'tcp'.");
+        }
+    }
+
+    private function validatePropetrySocketPath()
+    {
+        if (strlen($this->socketPath) === 0) {
+            throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'.");
+        }
+        if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
+            throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
+        }
+    }
+
+    private function validatePropetrySocketAddress()
+    {
+        if (strlen($this->socketAddress) === 0) {
+            throw new InvalidArgumentException("The option socketAddress must be supplied for socketType 'tcp'.");
+        }
+    }
+
+    private function validatePropetrySocketPort()
+    {
+        if (strlen($this->socketPort) === 0) {
+            throw new InvalidArgumentException("The option socketPort must be supplied for socketType 'tcp'.");
         }
     }
 
@@ -180,11 +195,6 @@ class Client
                 $this->openTcpSocket();
                 break;
         }
-
-        if (count($this->socketTimeout) !== 0) {
-            socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
-            socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
-        }
     }
 
     /**
@@ -202,6 +212,8 @@ class Client
             $this->closeSocket();
             throw new RuntimeException("Unable to connect to socket.");
         }
+
+        $this->setSocketTimeout();
     }
 
     /**
@@ -221,6 +233,19 @@ class Client
         }
 
         socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
+
+        $this->setSocketTimeout();
+    }
+
+    /**
+     * ソケットタイムアウトの設定
+     */
+    private function setSocketTimeout()
+    {
+        if (count($this->socketTimeout) !== 0) {
+            socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
+            socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
+        }
     }
 
     /**

@@ -420,33 +420,61 @@ class Lql
      */
     public function build()
     {
-        $request = sprintf("GET %s\n", $this->table);
-
-        if (count($this->columns) !== 0) {
-            $request .= sprintf("Columns: %s\n", implode(' ', $this->columns));
-            $request .= $this->headers;
-        }
-
-        if (!is_null($this->queries)) {
-            $request .= implode('', $this->queries);
-        }
-
-        if (!is_null($this->outputFormat)) {
-            $request .= $this->outputFormat;
-        }
-
-        if (!is_null($this->authUser)) {
-            $request .= $this->authUser;
-        }
-
-        if (!is_null($this->limit)) {
-            $request .= $this->limit;
-        }
-
-        $request .= "ResponseHeader: fixed16\n";
-        $request .= "\n";
+        $request = sprintf("GET %s\n", $this->table)
+            . $this->getColumnsField()
+            . $this->getQueriesFiled()
+            . $this->getOutputFormatFiled()
+            . $this->getAuthFiled()
+            . $this->getLimitField()
+            . "ResponseHeader: fixed16\n"
+            . "\n";
 
         return $request;
+    }
+
+    private function getColumnsField()
+    {
+        if (count($this->columns) !== 0) {
+            return sprintf("Columns: %s\n", implode(' ', $this->columns)) . $this->headers;
+        }
+
+        return '';
+    }
+
+    private function getQueriesFiled()
+    {
+        if (!is_null($this->queries)) {
+            return implode('', $this->queries);
+        }
+
+        return '';
+    }
+
+    private function getOutputFormatFiled()
+    {
+        if (!is_null($this->outputFormat)) {
+            return $this->outputFormat;
+        }
+
+        return '';
+    }
+
+    private function getAuthFiled()
+    {
+        if (!is_null($this->authUser)) {
+            return $this->authUser;
+        }
+
+        return '';
+    }
+
+    private function getLimitField()
+    {
+        if (!is_null($this->limit)) {
+            return $this->limit;
+        }
+
+        return '';
     }
 
     /**
