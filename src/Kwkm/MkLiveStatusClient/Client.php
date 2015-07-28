@@ -66,6 +66,21 @@ class Client
         if (!function_exists("socket_create")) {
             throw new BadFunctionCallException("The PHP function socket_create is not available.");
         }
+
+        $this->assignProperty($conf);
+
+        $this->validateProperty();
+
+        $this->reset();
+    }
+
+    /**
+     * 設定をプロパティに割り当て
+     *
+     * @param array $conf
+     */
+    private function assignProperty($conf)
+    {
         foreach ($conf as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
@@ -73,6 +88,13 @@ class Client
                 throw new InvalidArgumentException("The option '$key' is not recognised.");
             }
         }
+    }
+
+    /**
+     * プロパティの値の妥当性を確認
+     */
+    private function validateProperty()
+    {
         switch ($this->socketType) {
             case "unix":
                 if (strlen($this->socketPath) === 0) {
@@ -93,7 +115,6 @@ class Client
             default:
                 throw new InvalidArgumentException("Socket Type is invalid. Must be one of 'unix' or 'tcp'.");
         }
-        $this->reset();
     }
 
     /**
@@ -153,40 +174,53 @@ class Client
 
         switch ($this->socketType) {
             case 'unix':
-                $this->socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
+                $this->openUnixSocket();
                 break;
             case 'tcp':
-                $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+                $this->openTcpSocket();
                 break;
-        }
-
-        if (!$this->socket) {
-            $this->socket = null;
-            throw new RuntimeException("Could not create socket.");
-        }
-
-        switch ($this->socketType) {
-            case 'unix':
-                $result = socket_connect($this->socket, $this->socketPath);
-                break;
-            case 'tcp':
-                $result = socket_connect($this->socket, $this->socketAddress, $this->socketPort);
-                break;
-        }
-
-        if (!$result) {
-            $this->closeSocket();
-            throw new RuntimeException("Unable to connect to socket.");
-        }
-
-        if ($this->socketType === "tcp") {
-            socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
         }
 
         if (count($this->socketTimeout) !== 0) {
             socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
             socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
         }
+    }
+
+    /**
+     * Unixソケットの接続を開始
+     */
+    private function openUnixSocket()
+    {
+        $this->socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
+        if (!$this->socket) {
+            $this->socket = null;
+            throw new RuntimeException("Could not create socket.");
+        }
+
+        if (false === socket_connect($this->socket, $this->socketPath)) {
+            $this->closeSocket();
+            throw new RuntimeException("Unable to connect to socket.");
+        }
+    }
+
+    /**
+     * Tcpソケットの接続を開始
+     */
+    private function openTcpSocket()
+    {
+        $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if (!$this->socket) {
+            $this->socket = null;
+            throw new RuntimeException("Could not create socket.");
+        }
+
+        if (false === socket_connect($this->socket, $this->socketAddress, $this->socketPort)) {
+            $this->closeSocket();
+            throw new RuntimeException("Unable to connect to socket.");
+        }
+
+        socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
     }
 
     /**
