@@ -98,6 +98,7 @@ class Client
         switch ($this->socketType) {
             case "unix":
                 $this->validatePropetrySocketPath();
+                $this->checkAccessSocketPath();
                 break;
             case "tcp":
                 $this->validatePropetrySocketAddress();
@@ -113,6 +114,10 @@ class Client
         if (strlen($this->socketPath) === 0) {
             throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'.");
         }
+    }
+
+    private function checkAccessSocketPath()
+    {
         if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
             throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
         }
@@ -141,9 +146,22 @@ class Client
      */
     public function execute(Lql $lql)
     {
+        $result = $this->executeRequest($lql->build());
+
+        $this->verifyStatusCode($result);
+
+        $response = json_decode(utf8_encode($result['response']));
+
+        if (is_null($response)) {
+            throw new RuntimeException("The response was invalid.");
+        }
+
+        return $response;
+    }
+
+    private function executeRequest($query)
+    {
         $this->openSocket();
-        $query = $lql->build();
-        // Send the query to MK Livestatus
         socket_write($this->socket, $query);
         // Read 16 bytes to get the status code and body size
         $header = $this->readSocket(16);
@@ -152,19 +170,20 @@ class Client
         $response = $this->readSocket($length);
         $this->closeSocket();
 
+        return array(
+            'status' => $status,
+            'length' => $length,
+            'response' => $response,
+        );
+    }
+
+    private function verifyStatusCode($response)
+    {
         // Check for errors. A 200 response means request was OK.
         // Any other response is a failure.
-        if ($status != "200") {
-            throw new RuntimeException("Error response from Nagios MK Livestatus: " . $response);
+        if ($response['status'] != "200") {
+            throw new RuntimeException("Error response from Nagios MK Livestatus: " . $response['response']);
         }
-
-        $response = json_decode(utf8_encode($response));
-
-        if (is_null($response)) {
-            throw new RuntimeException("The response was invalid.");
-        }
-
-        return $response;
     }
 
     /**
