@@ -65,7 +65,7 @@ class LqlObject
             throw new InvalidArgumentException("Argument 1 must be a string.");
         }
 
-        $this->table = $table;
+        $this->table = trim($table);
     }
 
     public function setColumns($columns)
@@ -81,7 +81,7 @@ class LqlObject
         if (!is_string($column)) {
             throw new InvalidArgumentException("Argument 1 must be a string.");
         }
-        $this->columns[] = $column;
+        $this->columns[] = trim($column);
     }
 
     public function appendStringQuery($name, $value)
@@ -89,7 +89,7 @@ class LqlObject
         if (!is_string($value)) {
             throw new InvalidArgumentException("Argument 1 must be a string.");
         }
-        $this->queries[] = sprintf("%s: %s\n", $name, $value);
+        $this->queries[] = sprintf("%s: %s\n", $name, trim($value));
     }
 
     public function appendIntegerQuery($name, $value)
@@ -148,7 +148,7 @@ class LqlObject
         if (!is_string($authUser)) {
             throw new InvalidArgumentException("Argument 1 must be a string.");
         }
-        $this->authUser = sprintf("AuthUser: %s\n", $authUser);
+        $this->authUser = sprintf("AuthUser: %s\n", trim($authUser));
     }
 
     /**
@@ -161,8 +161,8 @@ class LqlObject
         $this->queries = array();
         $this->table = null;
         $this->columns = array();
-        $this->authUser = null;
-        $this->limit = null;
+        $this->authUser = '';
+        $this->limit = '';
 
         $this->setHeader(true);
         $this->setOutputFormat('json');
@@ -188,8 +188,8 @@ class LqlObject
             . $this->getColumnsField()
             . $this->getQueriesFiled()
             . $this->getOutputFormatFiled()
-            . $this->getAuthFiled()
-            . $this->getLimitField()
+            . $this->authUser
+            . $this->limit
             . "ResponseHeader: fixed16\n"
             . "\n";
 
@@ -218,24 +218,6 @@ class LqlObject
     {
         if (!is_null($this->outputFormat)) {
             return $this->outputFormat;
-        }
-
-        return '';
-    }
-
-    private function getAuthFiled()
-    {
-        if (!is_null($this->authUser)) {
-            return $this->authUser;
-        }
-
-        return '';
-    }
-
-    private function getLimitField()
-    {
-        if (!is_null($this->limit)) {
-            return $this->limit;
         }
 
         return '';

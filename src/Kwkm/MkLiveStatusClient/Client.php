@@ -95,7 +95,7 @@ class Client
         if ($response['status'] != "200") {
             throw new RuntimeException(
                 "Error response from Nagios MK Livestatus: " . $response['status'],
-                (int)$response['status']
+                (int) $response['status']
             );
         }
     }
