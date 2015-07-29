@@ -1,0 +1,139 @@
+<?php
+/**
+ * MkLiveStatusClient - Configuration
+ *
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
+ */
+namespace Kwkm\MkLiveStatusClient;
+
+use \BadFunctionCallException;
+use \InvalidArgumentException;
+
+/**
+ * Class Configuration
+ * @package Kwkm\MkLiveStatusClient
+ */
+class Configuration
+{
+    /**
+     * 接続方式(unix or tcp)
+     * @var string
+     */
+    protected $socketType = "unix";
+
+    /**
+     * ソケットファイル
+     * @var string
+     */
+    protected $socketPath = "/var/run/nagios/rw/live";
+
+    /**
+     * TCP接続時のIPアドレス
+     * @var string
+     */
+    protected $socketAddress = "";
+
+    /**
+     * TCP接続時のポート
+     * @var string
+     */
+    protected $socketPort = "";
+
+    /**
+     * TCP接続時のタイムアウト秒数
+     * @var array
+     * @link http://php.net/manual/en/function.socket-set-option.php
+     */
+    protected $socketTimeout = array();
+
+    /**
+     * コンストラクタ
+     *
+     * @param array $conf
+     * @throw \BadFunctionCallException
+     * @throw \InvalidArgumentException
+     */
+    public function __construct(array $conf)
+    {
+        if (!function_exists("socket_create")) {
+            throw new BadFunctionCallException("The PHP function socket_create is not available.");
+        }
+
+        $this->assignProperty($conf);
+
+        $this->validateProperty();
+    }
+
+    public function __get($property)
+    {
+        if (property_exists($this, $property)) {
+            return $this->{$property};
+        } else {
+            throw new InvalidArgumentException("The option '$property' is not recognised.");
+        }
+    }
+
+    /**
+     * 設定をプロパティに割り当て
+     *
+     * @param array $conf
+     */
+    private function assignProperty($conf)
+    {
+        foreach ($conf as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            } else {
+                throw new InvalidArgumentException("The option '$key' is not recognised.");
+            }
+        }
+    }
+
+    /**
+     * プロパティの値の妥当性を確認
+     */
+    private function validateProperty()
+    {
+        switch ($this->socketType) {
+            case "unix":
+                $this->validatePropetrySocketPath();
+                $this->checkAccessSocketPath();
+                break;
+            case "tcp":
+                $this->validatePropetrySocketAddress();
+                $this->validatePropetrySocketPort();
+                break;
+            default:
+                throw new InvalidArgumentException("Socket Type is invalid. Must be one of 'unix' or 'tcp'.");
+        }
+    }
+
+    private function validatePropetrySocketPath()
+    {
+        if (strlen($this->socketPath) === 0) {
+            throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'.");
+        }
+    }
+
+    private function checkAccessSocketPath()
+    {
+        if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
+            throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
+        }
+    }
+
+    private function validatePropetrySocketAddress()
+    {
+        if (strlen($this->socketAddress) === 0) {
+            throw new InvalidArgumentException("The option socketAddress must be supplied for socketType 'tcp'.");
+        }
+    }
+
+    private function validatePropetrySocketPort()
+    {
+        if (strlen($this->socketPort) === 0) {
+            throw new InvalidArgumentException("The option socketPort must be supplied for socketType 'tcp'.");
+        }
+    }
+}

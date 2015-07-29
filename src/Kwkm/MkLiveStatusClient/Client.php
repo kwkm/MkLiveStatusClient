@@ -18,35 +18,11 @@ use \RuntimeException;
 class Client
 {
     /**
-     * 接続方式(unix or tcp)
-     * @var string
-     */
-    protected $socketType = "unix";
-
-    /**
-     * ソケットファイル
-     * @var string
-     */
-    protected $socketPath = "/var/run/nagios/rw/live";
-
-    /**
-     * TCP接続時のIPアドレス
-     * @var string
-     */
-    protected $socketAddress = "";
-
-    /**
-     * TCP接続時のポート
-     * @var string
-     */
-    protected $socketPort = "";
-
-    /**
-     * TCP接続時のタイムアウト秒数
-     * @var array
+     * 設定
+     * @var Configuration
      * @link http://php.net/manual/en/function.socket-set-option.php
      */
-    protected $socketTimeout = array();
+    protected $config;
 
     /**
      * ソケットのリソース
@@ -63,78 +39,9 @@ class Client
      */
     public function __construct(array $conf)
     {
-        if (!function_exists("socket_create")) {
-            throw new BadFunctionCallException("The PHP function socket_create is not available.");
-        }
-
-        $this->assignProperty($conf);
-
-        $this->validateProperty();
+        $this->config = new Configuration($conf);
 
         $this->reset();
-    }
-
-    /**
-     * 設定をプロパティに割り当て
-     *
-     * @param array $conf
-     */
-    private function assignProperty($conf)
-    {
-        foreach ($conf as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            } else {
-                throw new InvalidArgumentException("The option '$key' is not recognised.");
-            }
-        }
-    }
-
-    /**
-     * プロパティの値の妥当性を確認
-     */
-    private function validateProperty()
-    {
-        switch ($this->socketType) {
-            case "unix":
-                $this->validatePropetrySocketPath();
-                $this->checkAccessSocketPath();
-                break;
-            case "tcp":
-                $this->validatePropetrySocketAddress();
-                $this->validatePropetrySocketPort();
-                break;
-            default:
-                throw new InvalidArgumentException("Socket Type is invalid. Must be one of 'unix' or 'tcp'.");
-        }
-    }
-
-    private function validatePropetrySocketPath()
-    {
-        if (strlen($this->socketPath) === 0) {
-            throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'.");
-        }
-    }
-
-    private function checkAccessSocketPath()
-    {
-        if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
-            throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
-        }
-    }
-
-    private function validatePropetrySocketAddress()
-    {
-        if (strlen($this->socketAddress) === 0) {
-            throw new InvalidArgumentException("The option socketAddress must be supplied for socketType 'tcp'.");
-        }
-    }
-
-    private function validatePropetrySocketPort()
-    {
-        if (strlen($this->socketPort) === 0) {
-            throw new InvalidArgumentException("The option socketPort must be supplied for socketType 'tcp'.");
-        }
     }
 
     /**
@@ -206,7 +113,7 @@ class Client
             return;
         }
 
-        switch ($this->socketType) {
+        switch ($this->config->socketType) {
             case 'unix':
                 $this->openUnixSocket();
                 break;
@@ -227,7 +134,7 @@ class Client
             throw new RuntimeException("Could not create socket.");
         }
 
-        if (false === socket_connect($this->socket, $this->socketPath)) {
+        if (false === socket_connect($this->socket, $this->config->socketPath)) {
             $this->closeSocket();
             throw new RuntimeException("Unable to connect to socket.");
         }
@@ -246,7 +153,7 @@ class Client
             throw new RuntimeException("Could not create socket.");
         }
 
-        if (false === socket_connect($this->socket, $this->socketAddress, $this->socketPort)) {
+        if (false === socket_connect($this->socket, $this->config->socketAddress, $this->config->socketPort)) {
             $this->closeSocket();
             throw new RuntimeException("Unable to connect to socket.");
         }
@@ -261,9 +168,9 @@ class Client
      */
     private function setSocketTimeout()
     {
-        if (count($this->socketTimeout) !== 0) {
-            socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
-            socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
+        if (count($this->config->socketTimeout) !== 0) {
+            socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->config->socketTimeout);
+            socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->config->socketTimeout);
         }
     }
 
@@ -306,5 +213,4 @@ class Client
 
         return $socketData;
     }
-
 }
