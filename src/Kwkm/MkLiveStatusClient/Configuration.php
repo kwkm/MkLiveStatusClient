@@ -111,6 +111,9 @@ class Configuration
         }
     }
 
+    /**
+     * socketPathの設定確認
+     */
     private function validatePropetrySocketPath()
     {
         if (strlen($this->socketPath) === 0) {
@@ -118,6 +121,9 @@ class Configuration
         }
     }
 
+    /**
+     * socketPathが利用可能かの確認
+     */
     private function checkAccessSocketPath()
     {
         if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
@@ -125,6 +131,9 @@ class Configuration
         }
     }
 
+    /**
+     * socketAddressの設定確認
+     */
     private function validatePropetrySocketAddress()
     {
         if (strlen($this->socketAddress) === 0) {
@@ -132,6 +141,9 @@ class Configuration
         }
     }
 
+    /**
+     * socketPortの設定確認
+     */
     private function validatePropetrySocketPort()
     {
         if (strlen($this->socketPort) === 0) {

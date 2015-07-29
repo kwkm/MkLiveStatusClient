@@ -1,8 +1,6 @@
 <?php
 namespace Kwkm\MkLiveStatusClient;
 
-use \BadFunctionCallException;
-use \InvalidArgumentException;
 use \RuntimeException;
 
 /**
@@ -63,6 +61,11 @@ class Client
         return $response;
     }
 
+    /**
+     * リクエストの発行
+     * @param $query
+     * @return array
+     */
     private function executeRequest($query)
     {
         $this->openSocket();
@@ -81,12 +84,19 @@ class Client
         );
     }
 
+    /**
+     * ステータスコードの確認
+     * @param $response
+     */
     private function verifyStatusCode($response)
     {
         // Check for errors. A 200 response means request was OK.
         // Any other response is a failure.
         if ($response['status'] != "200") {
-            throw new RuntimeException("Error response from Nagios MK Livestatus: " . $response['response']);
+            throw new RuntimeException(
+                "Error response from Nagios MK Livestatus: " . $response['status'],
+                (int)$response['status']
+            );
         }
     }
 

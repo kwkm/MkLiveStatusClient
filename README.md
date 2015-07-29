@@ -1,5 +1,7 @@
 # mkLivestatus Client
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/?branch=master)
+
 ## Client Setting.
 
 ### In the case of localhost.
