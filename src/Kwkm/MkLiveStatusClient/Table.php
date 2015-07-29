@@ -1,15 +1,12 @@
 <?php
-/**
- * MkLiveStatusClient - Table
- *
- * @author Takehiro Kawakami <take@kwkm.org>
- * @license MIT
- */
 namespace Kwkm\MkLiveStatusClient;
 
 /**
  * Class Table
+ *
  * @package Kwkm\MkLiveStatusClient
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
  */
 class Table
 {

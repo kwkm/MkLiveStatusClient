@@ -1,15 +1,12 @@
 <?php
-/**
- * MkLiveStatusClient - Parser
- *
- * @author Takehiro Kawakami <take@kwkm.org>
- * @license MIT
- */
 namespace Kwkm\MkLiveStatusClient;
 
 /**
  * Class Parser
+ *
  * @package Kwkm\MkLiveStatusClient
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
  */
 class Parser
 {

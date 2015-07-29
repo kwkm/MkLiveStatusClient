@@ -1,17 +1,14 @@
 <?php
-/**
- * MkLiveStatusClient - Lql
- *
- * @author Takehiro Kawakami <take@kwkm.org>
- * @license MIT
- */
 namespace Kwkm\MkLiveStatusClient;
 
 use \InvalidArgumentException;
 
 /**
  * Class Lql
+ *
  * @package Kwkm\MkLiveStatusClient
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
  */
 class Lql
 {

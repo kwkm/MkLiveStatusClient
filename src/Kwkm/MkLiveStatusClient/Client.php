@@ -1,10 +1,4 @@
 <?php
-/**
- * MkLiveStatusClient - Client
- *
- * @author Takehiro Kawakami <take@kwkm.org>
- * @license MIT
- */
 namespace Kwkm\MkLiveStatusClient;
 
 use \BadFunctionCallException;
@@ -13,7 +7,10 @@ use \RuntimeException;
 
 /**
  * Class Client
+ *
  * @package Kwkm\MkLiveStatusClient
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
  */
 class Client
 {

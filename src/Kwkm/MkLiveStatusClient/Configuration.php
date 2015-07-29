@@ -1,10 +1,4 @@
 <?php
-/**
- * MkLiveStatusClient - Configuration
- *
- * @author Takehiro Kawakami <take@kwkm.org>
- * @license MIT
- */
 namespace Kwkm\MkLiveStatusClient;
 
 use \BadFunctionCallException;
@@ -12,7 +6,15 @@ use \InvalidArgumentException;
 
 /**
  * Class Configuration
+ *
  * @package Kwkm\MkLiveStatusClient
+ * @property-read string      $socketType       接続方式(unix or tcp)
+ * @property-read string      $socketPath       ソケットファイル
+ * @property-read string      $socketAddress    TCP接続時のIPアドレス
+ * @property-read string      $socketPort       TCP接続時のポート
+ * @property-read array       $socketTimeout    TCP接続時のタイムアウト秒数
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
  */
 class Configuration
 {
