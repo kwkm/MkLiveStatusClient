@@ -1,8 +1,6 @@
 <?php
 namespace Kwkm\MkLiveStatusClient;
 
-use \InvalidArgumentException;
-
 /**
  * Class Lql
  *
@@ -13,46 +11,9 @@ use \InvalidArgumentException;
 class Lql
 {
     /**
-     * Lql query
-     * @var array
+     * @var \Kwkm\MkLiveStatusClient\LqlObject
      */
-    protected $queries;
-
-    /**
-     * Acquisition table
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * Header
-     * @var string
-     */
-    protected $headers;
-
-    /**
-     * Acquisition column
-     * @var array
-     */
-    protected $columns;
-
-    /**
-     * Output Format type
-     * @var string
-     */
-    protected $outputFormat;
-
-    /**
-     * Authentication username
-     * @var string
-     */
-    protected $authUser;
-
-    /**
-     * Acquisition number
-     * @var integer;
-     */
-    protected $limit;
+    private $lqlObject;
 
     /**
      * 初期化
@@ -61,14 +22,7 @@ class Lql
      */
     public function reset()
     {
-        $this->queries = array();
-        $this->table = null;
-        $this->columns = array();
-        $this->authUser = null;
-        $this->limit = null;
-
-        $this->headers(true);
-        $this->outputFormat('json');
+        $this->lqlObject = new LqlObject();
 
         return $this;
     }
@@ -82,10 +36,7 @@ class Lql
      */
     public function table($table)
     {
-        if (!is_string($table)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->table = $table;
+        $this->lqlObject->setTable($table);
 
         return $this;
     }
@@ -99,10 +50,7 @@ class Lql
      */
     public function column($column)
     {
-        if (!is_string($column)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->columns[] = $column;
+        $this->lqlObject->appendColumns($column);
 
         return $this;
     }
@@ -116,14 +64,7 @@ class Lql
      */
     public function headers($boolean)
     {
-        if (!is_bool($boolean)) {
-            throw new InvalidArgumentException("Argument 1 must be a boolean.");
-        }
-        if ($boolean === true) {
-            $this->headers = "ColumnHeaders: on\n";
-        } else {
-            $this->headers = "ColumnHeaders: off\n";
-        }
+        $this->lqlObject->setHeader($boolean);
 
         return $this;
     }
@@ -135,12 +76,9 @@ class Lql
      * @return \Kwkm\MkLiveStatusClient\Lql
      * @throw \InvalidArgumentException if the provided argument is not of type 'array'.
      */
-    public function columns(array $columns)
+    public function columns($columns)
     {
-        if (!is_array($columns)) {
-            throw new InvalidArgumentException("Argument 1 must be an array.");
-        }
-        $this->columns = $columns;
+        $this->lqlObject->setColumns($columns);
 
         return $this;
     }
@@ -154,10 +92,7 @@ class Lql
      */
     public function filter($filter)
     {
-        if (!is_string($filter)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->queries[] = sprintf("Filter: %s\n", $filter);
+        $this->lqlObject->appendStringQuery('Filter', $filter);
 
         return $this;
     }
@@ -282,10 +217,7 @@ class Lql
      */
     public function stats($stats)
     {
-        if (!is_string($stats)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->queries[] = sprintf("Stats: %s\n", $stats);
+        $this->lqlObject->appendStringQuery('Stats', $stats);
 
         return $this;
     }
@@ -298,10 +230,7 @@ class Lql
      */
     public function statsAnd($statsAnd)
     {
-        if (!is_int($statsAnd)) {
-            throw new InvalidArgumentException("Argument 1 must be an integer.");
-        }
-        $this->queries[] = sprintf("StatsAnd: %d\n", $statsAnd);
+        $this->lqlObject->appendIntegerQuery('StatsAnd', $statsAnd);
 
         return $this;
     }
@@ -312,7 +241,7 @@ class Lql
      */
     public function statsNegate()
     {
-        $this->queries[] = "StatsNegate:\n";
+        $this->lqlObject->appendNoValueQuery('StatsNegate');
 
         return $this;
     }
@@ -325,10 +254,7 @@ class Lql
      */
     public function lor($or)
     {
-        if (!is_int($or)) {
-            throw new InvalidArgumentException("Argument 1 must be an integer.");
-        }
-        $this->queries[] = sprintf("Or: %d\n", $or);
+        $this->lqlObject->appendIntegerQuery('Or', $or);
 
         return $this;
     }
@@ -339,7 +265,7 @@ class Lql
      */
     public function negate()
     {
-        $this->queries[] = "Negate:\n";
+        $this->lqlObject->appendNoValueQuery('Negate');
 
         return $this;
     }
@@ -352,13 +278,7 @@ class Lql
      */
     public function parameter($parameter)
     {
-        if (!is_string($parameter)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        if (trim($parameter) === "") {
-            return $this;
-        }
-        $this->queries[] = $this->formatEnding($parameter);
+        $this->lqlObject->appendParameter($parameter);
 
         return $this;
     }
@@ -371,10 +291,7 @@ class Lql
      */
     public function outputFormat($outputFormat)
     {
-        if (!is_string($outputFormat)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->outputFormat = sprintf("OutputFormat: %s\n", $outputFormat);
+        $this->lqlObject->setOutputFormat($outputFormat);
 
         return $this;
     }
@@ -387,10 +304,7 @@ class Lql
      */
     public function limit($limit)
     {
-        if (!is_int($limit)) {
-            throw new InvalidArgumentException("Argument 1 must be an integer.");
-        }
-        $this->limit = sprintf("Limit: %d\n", $limit);
+        $this->lqlObject->setLimit($limit);
 
         return $this;
     }
@@ -403,10 +317,7 @@ class Lql
      */
     public function authUser($authUser)
     {
-        if (!is_string($authUser)) {
-            throw new InvalidArgumentException("Argument 1 must be a string.");
-        }
-        $this->authUser = sprintf("AuthUser: %s\n", $authUser);
+        $this->lqlObject->setAuthUser($authUser);
 
         return $this;
     }
@@ -417,75 +328,7 @@ class Lql
      */
     public function build()
     {
-        $request = sprintf("GET %s\n", $this->table)
-            . $this->getColumnsField()
-            . $this->getQueriesFiled()
-            . $this->getOutputFormatFiled()
-            . $this->getAuthFiled()
-            . $this->getLimitField()
-            . "ResponseHeader: fixed16\n"
-            . "\n";
-
-        return $request;
-    }
-
-    private function getColumnsField()
-    {
-        if (count($this->columns) !== 0) {
-            return sprintf("Columns: %s\n", implode(' ', $this->columns)) . $this->headers;
-        }
-
-        return '';
-    }
-
-    private function getQueriesFiled()
-    {
-        if (!is_null($this->queries)) {
-            return implode('', $this->queries);
-        }
-
-        return '';
-    }
-
-    private function getOutputFormatFiled()
-    {
-        if (!is_null($this->outputFormat)) {
-            return $this->outputFormat;
-        }
-
-        return '';
-    }
-
-    private function getAuthFiled()
-    {
-        if (!is_null($this->authUser)) {
-            return $this->authUser;
-        }
-
-        return '';
-    }
-
-    private function getLimitField()
-    {
-        if (!is_null($this->limit)) {
-            return $this->limit;
-        }
-
-        return '';
-    }
-
-    /**
-     * 終端の改行文字の付与
-     * @param string $string 改行文字を付与する文字列
-     * @return string           改行文字が付与された文字列
-     */
-    protected function formatEnding($string)
-    {
-        if ($string[strlen($string) - 1] !== "\n") {
-            $string .= "\n";
-        }
-
-        return $string;
+        return $this->lqlObject->build();
     }
 
     /**
