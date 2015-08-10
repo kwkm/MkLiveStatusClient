@@ -104,3 +104,38 @@ $lql->table(mk\Table::HOSTS)
 $result = $parser->get($client->execute($lql));
 ```
 
+### Matching attribute lists
+
+#### Find all hosts with modified attributes.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::HOSTS)
+    ->columns(array('host_name', 'modified_attributes_list'))
+    ->filterNotEqual('modified_attributes', '0');
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### Find hosts where notification have been actively disabled.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::HOSTS)
+    ->columns(array('host_name', 'modified_attributes_list'))
+    ->filterMatch('modified_attributes', 'notifications_enabled')
+    ->filterEqual('notifications_enabled', '0');
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### Find hosts where active or passive checks have been tweaked.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::HOSTS)
+    ->columns(array('host_name', 'modified_attributes_list'))
+    ->filter('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
+
+$result = $parser->get($client->execute($lql));
+```
