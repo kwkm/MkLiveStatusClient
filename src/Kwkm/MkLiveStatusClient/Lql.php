@@ -252,9 +252,22 @@ class Lql
      * @return \Kwkm\MkLiveStatusClient\Lql
      * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
      */
-    public function lor($or)
+    public function filterOr($or)
     {
         $this->lqlObject->appendIntegerQuery('Or', $or);
+
+        return $this;
+    }
+
+    /**
+     * And の指定
+     * @param integer $and
+     * @return \Kwkm\MkLiveStatusClient\Lql
+     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
+     */
+    public function filterAnd($and)
+    {
+        $this->lqlObject->appendIntegerQuery('And', $and);
 
         return $this;
     }

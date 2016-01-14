@@ -139,3 +139,56 @@ $lql->table(mk\Table::HOSTS)
 
 $result = $parser->get($client->execute($lql));
 ```
+
+### Combining Filters with And, Or and Negate.
+
+#### Selects all services which are in state 1 or in state 3.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::SERVICES)
+    ->filterEqual('state', '1')
+    ->filterEqual('state', '3')
+    ->filterOr(2);
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### Shows all non-OK services which are within a scheduled downtime or which are on a host with a scheduled downtime.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::SERVICES)
+    ->filterGreater('scheduled_downtime_depth', '0')
+    ->filterGreater('host_scheduled_downtime_depth', '0')
+    ->filterOr(2);
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### All services that are either critical and acknowledged or OK.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::SERVICES)
+    ->filterEqual('state', '2')
+    ->filterEqual('acknowledged', '1')
+    ->filterAnd(2);
+    ->filterEqual('state', '0')
+    ->filterOr(2);
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### Displays all hosts that have neither an a nor an o in their name.
+
+```PHP
+$lql = new mk\Lql();
+$lql->table(mk\Table::HOSTS)
+    ->filterMatch('name', 'a')
+    ->filterMatch('name', 'o')
+    ->filterOr(2)
+    ->negate();
+
+$result = $parser->get($client->execute($lql));
+```
