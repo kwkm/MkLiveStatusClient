@@ -10,6 +10,10 @@ namespace Kwkm\MkLiveStatusClient;
  */
 class Lql
 {
+    private $table;
+    private $authUser;
+
+
     /**
      * @var \Kwkm\MkLiveStatusClient\LqlObject
      */
@@ -23,20 +27,10 @@ class Lql
     public function reset()
     {
         $this->lqlObject = new LqlObject();
-
-        return $this;
-    }
-
-    /**
-     * 取得テーブルの設定
-     *
-     * @param string $table
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'string'.
-     */
-    public function table($table)
-    {
-        $this->lqlObject->setTable($table);
+        $this->lqlObject->setTable($this->table);
+        if (!is_null($this->authUser)) {
+            $this->lqlObject->setAuthUser($this->authUser);
+        }
 
         return $this;
     }
@@ -86,127 +80,15 @@ class Lql
     /**
      * 任意のフィルタ設定
      *
-     * @param string $filter
+     * @param \Kwkm\MkLiveStatusClient\Filter $filter
      * @return \Kwkm\MkLiveStatusClient\Lql
      * @throw \InvalidArgumentException if the provided argument is not of type 'string'.
      */
-    public function filter($filter)
+    public function filter(Filter $filter)
     {
-        $this->lqlObject->appendStringQuery('Filter', $filter);
+        $this->lqlObject->appendFilterQuery($filter);
 
         return $this;
-    }
-
-    /**
-     * column = value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterEqual($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s = %s", $column, $value)
-        );
-    }
-
-    /**
-     * column ~ value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterMatch($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s ~ %s", $column, $value)
-        );
-    }
-
-    /**
-     * column != value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterNotEqual($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s != %s", $column, $value)
-        );
-    }
-
-    /**
-     * column !~ value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterNotMatch($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s !~ %s", $column, $value)
-        );
-    }
-
-    /**
-     * column < value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterLess($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s < %s", $column, $value)
-        );
-    }
-
-    /**
-     * column > value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterGreater($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s > %s", $column, $value)
-        );
-    }
-
-    /**
-     * column <= value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterLessEqual($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s <= %s", $column, $value)
-        );
-    }
-
-    /**
-     * column >= value のフィルタ設定
-     *
-     * @param string $column カラム名
-     * @param string $value フィルタする値
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function filterGreaterEqual($column, $value)
-    {
-        return $this->filter(
-            sprintf("%s >= %s", $column, $value)
-        );
     }
 
     /**
@@ -242,32 +124,6 @@ class Lql
     public function statsNegate()
     {
         $this->lqlObject->appendNoValueQuery('StatsNegate');
-
-        return $this;
-    }
-
-    /**
-     * Or の指定
-     * @param integer $or
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
-     */
-    public function filterOr($or)
-    {
-        $this->lqlObject->appendIntegerQuery('Or', $or);
-
-        return $this;
-    }
-
-    /**
-     * And の指定
-     * @param integer $and
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
-     */
-    public function filterAnd($and)
-    {
-        $this->lqlObject->appendIntegerQuery('And', $and);
 
         return $this;
     }
@@ -323,19 +179,6 @@ class Lql
     }
 
     /**
-     * AuthUser の指定
-     * @param string $authUser
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'string'.
-     */
-    public function authUser($authUser)
-    {
-        $this->lqlObject->setAuthUser($authUser);
-
-        return $this;
-    }
-
-    /**
      * Lqlの実行テキストの作成
      * @return string
      */
@@ -347,8 +190,10 @@ class Lql
     /**
      * コンストラクタ
      */
-    public function __construct()
+    public function __construct($table, $authUser = null)
     {
+        $this->table = $table;
+        $this->authUser = $authUser;
         $this->reset();
     }
 }
