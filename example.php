@@ -12,10 +12,11 @@ $client = new mk\Client(
 
 $parser = new mk\Parser();
 
-$lql = new mk\Lql();
-$lql->table(mk\Table::SERVICES)
-    ->columns(array('host_name', 'description', 'state'))->
-    filterEqual('description', 'PING');
+$filter = new mk\Filter();
+$filter->equal('description', 'PING');
+
+$lql = new mk\Lql(mk\Table::SERVICES);
+$lql->columns(array('host_name', 'description', 'state'))->filter($filter);
 
 var_dump($parser->get($client->execute($lql)));
 
