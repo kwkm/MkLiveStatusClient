@@ -84,11 +84,8 @@ class LqlObject
         $this->columns[] = trim($column);
     }
 
-    public function appendArrayQuery($array)
+    public function appendArrayQuery(array $array)
     {
-        if (!is_string($array)) {
-            throw new InvalidArgumentException("Argument 1 must be a array.");
-        }
         $this->queries = array_merge($this->queries, $array);
     }
 
