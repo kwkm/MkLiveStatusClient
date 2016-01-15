@@ -84,9 +84,12 @@ class LqlObject
         $this->columns[] = trim($column);
     }
 
-    public function appendFilterQuery(Filter $filter)
+    public function appendArrayQuery($array)
     {
-        $this->queries = array_merge($this->queries, $filter->get());
+        if (!is_string($array)) {
+            throw new InvalidArgumentException("Argument 1 must be a array.");
+        }
+        $this->queries = array_merge($this->queries, $array);
     }
 
     public function appendStringQuery($name, $value)

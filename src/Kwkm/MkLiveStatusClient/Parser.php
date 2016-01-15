@@ -13,14 +13,15 @@ class Parser
     /**
      * ヘッダをキーとした配列として読み込む
      *
-     * @param array $response
+     * @param string $response
      * @return array
      */
     public function get($response)
     {
-        $header = array_shift($response);
+        $json = json_decode($response);
+        $header = array_shift($json);
         $result = array();
-        foreach ($response as $row) {
+        foreach ($json as $row) {
             $work = array();
             foreach ($row as $key => $value) {
                 $work[$header[$key]] = $value;

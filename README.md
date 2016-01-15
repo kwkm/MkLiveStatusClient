@@ -11,12 +11,14 @@ use Kwkm\MkLiveStatusClient as mk;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$client = new mk\Client(
+$config = new mk\Configration(
     array(
         'socketType' => 'unix',
         'socketPath' => '/var/run/nagios/rw/live',
     )
 );
+
+$client = new mk\Client($config);
 
 $parser = new mk\Parser();
 ```
@@ -28,7 +30,7 @@ use Kwkm\MkLiveStatusClient as mk;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$client = new mk\Client(
+$config = new mk\Configration(
     array(
         'socketType' => 'tcp',
         'socketAddress' => '192.168.0.100',
@@ -36,15 +38,17 @@ $client = new mk\Client(
     )
 );
 
+$client = new mk\Client($config);
+
 $parser = new mk\Parser();
 ```
 
-## Example.
+## Example - LqlBuilder
 
 ### Retrieve all contacts.
 
 ```PHP
-$lql = new mk\Lql(mk\Table::CONTACTS);
+$lql = new mk\LqlBuilder(mk\Table::CONTACTS);
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -52,7 +56,7 @@ $result = $parser->get($client->execute($lql));
 ### Retrieves just the columns name and alias.
 
 ```PHP
-$lql = new mk\Lql(mk\Table::CONTACTS);
+$lql = new mk\LqlBuilder(mk\Table::CONTACTS);
 $lql->columns(array('name', 'alias'));
 
 $result = $parser->get($client->execute($lql));
@@ -61,12 +65,9 @@ $result = $parser->get($client->execute($lql));
 ### Gets all services with the current state 2 (critical).
 
 ```PHP
-$filter = new mk\Filter();
-$filter->equal('state', '2');
-
-$lql = new mk\Lql(mk\Table::SERVICES);
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
 $lql->columns(array('host_name', 'description', 'state'))
-    ->filter($filter);
+    ->filterEqual('state', '2');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -74,13 +75,10 @@ $result = $parser->get($client->execute($lql));
 ### Gets all critical services which are currently within their notification period.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->equal('state', '2')
-       ->qual('in_notification_period', '1');
-
-$lql = new mk\Lql(mk\Table::SERVICES);
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
 $lql->columns(array('host_name', 'description', 'state'))
-    ->filter($filter);
+    ->filterEqual('state', '2')
+    ->filterEqual('in_notification_period', '1');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -88,12 +86,9 @@ $result = $parser->get($client->execute($lql));
 ### Matching lists.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->greaterEqual('contacts', 'harri');
-
-$lql = new mk\Lql(mk\Table::SERVICES);
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
 $lql->columns(array('host_name', 'description', 'state', 'contacts'))
-    ->filter($filter);
+    ->filterGreaterEqual('contacts', 'harri');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -101,12 +96,9 @@ $result = $parser->get($client->execute($lql));
 ### Gets all hosts that do not have parents.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->equal('parents', '');
-
-$lql = new mk\Lql(mk\Table::HOSTS);
+$lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->column('name')
-    ->filter($filter);
+    ->filterEqual('parents', '');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -116,12 +108,9 @@ $result = $parser->get($client->execute($lql));
 #### Find all hosts with modified attributes.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->notEqual('modified_attributes', '0');
-
-$lql = new mk\Lql(mk\Table::HOSTS);
+$lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->columns(array('host_name', 'modified_attributes_list'))
-    ->filter($filter);
+    ->filterNotEqual('modified_attributes', '0');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -129,13 +118,10 @@ $result = $parser->get($client->execute($lql));
 #### Find hosts where notification have been actively disabled.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->match('modified_attributes', 'notifications_enabled')
-       ->equal('notifications_enabled', '0');
-
-$lql = new mk\Lql(mk\Table::HOSTS);
+$lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->columns(array('host_name', 'modified_attributes_list'))
-    ->filter($filter);
+    ->filterMatch('modified_attributes', 'notifications_enabled')
+    ->filterEqual('notifications_enabled', '0');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -143,12 +129,9 @@ $result = $parser->get($client->execute($lql));
 #### Find hosts where active or passive checks have been tweaked.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->set('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
-
-$lql = new mk\Lql(mk\Table::HOSTS);
+$lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->columns(array('host_name', 'modified_attributes_list'))
-    ->filter($filter);
+    ->filter('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -158,13 +141,10 @@ $result = $parser->get($client->execute($lql));
 #### Selects all services which are in state 1 or in state 3.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->equal('state', '1')
-       ->equal('state', '3')
-       ->operatorOr(2);
-
-$lql = new mk\Lql(mk\Table::SERVICES);
-$lql->filter($filter);
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterEqual('state', '1')
+    ->filterEqual('state', '3')
+    ->filterOr(2);
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -172,13 +152,10 @@ $result = $parser->get($client->execute($lql));
 #### Shows all non-OK services which are within a scheduled downtime or which are on a host with a scheduled downtime.
 
 ```PHP
-$filter = new mk\Filter();
-$filter->greater('scheduled_downtime_depth', '0')
-       ->greater('host_scheduled_downtime_depth', '0')
-       ->operatorOr(2);
-
-$lql = new mk\Lql(mk\Table::SERVICES);
-$lql->filter($filter);
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterGreater('scheduled_downtime_depth', '0')
+    ->filterGreater('host_scheduled_downtime_depth', '0')
+    ->filterOr(2);
 
 $result = $parser->get($client->execute($lql));
 ```
@@ -186,6 +163,39 @@ $result = $parser->get($client->execute($lql));
 #### All services that are either critical and acknowledged or OK.
 
 ```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterEqual('state', '2')
+    ->filterEqual('acknowledged', '1')
+    ->filterAnd(2);
+    ->filterEqual('state', '0')
+    ->filterOr(2);
+
+$result = $parser->get($client->execute($lql));
+```
+
+#### Displays all hosts that have neither an a nor an o in their name.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::HOSTS);
+$lql->filterMatch('name', 'a')
+    ->filterMatch('name', 'o')
+    ->filterOr(2)
+    ->negate();
+
+$result = $parser->get($client->execute($lql));
+```
+
+## Example - Lql
+
+```PHP
+$column = new mk\Column(
+    array(
+        'host_name',
+        'description',
+        'state',
+    )
+);
+
 $filter = new mk\Filter();
 $filter->equal('state', '2')
        ->equal('acknowledged', '1')
@@ -194,21 +204,26 @@ $filter->equal('state', '2')
        ->operatorOr(2);
 
 $lql = new mk\Lql(mk\Table::SERVICES);
-$lql->filter($filter);
+$lql->column($column)->filter($filter);
 
 $result = $parser->get($client->execute($lql));
 ```
 
-#### Displays all hosts that have neither an a nor an o in their name.
-
 ```PHP
-$filter = new mk\Filter();
-$filter->match('name', 'a')
-       ->match('name', 'o')
-       ->operatorOr(2);
+$column = new mk\Column(
+    array(
+        'host_name',
+    )
+);
 
-$lql = new mk\Lql(mk\Table::HOSTS);
-$lql->filter($filter)->negate();
+$stats = new mk\Stats();
+$stats->equal('state', '0')
+      ->equal('state', '1')
+      ->equal('state', '2')
+      ->equal('state', '3');
+
+$lql = new mk\Lql(mk\Table::SERVICES);
+$lql->stats($stats)->column($column);
 
 $result = $parser->get($client->execute($lql));
 ```

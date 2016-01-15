@@ -1,6 +1,13 @@
 <?php
 namespace Kwkm\MkLiveStatusClient;
 
+/**
+ * Class Filter
+ *
+ * @package Kwkm\MkLiveStatusClient
+ * @author Takehiro Kawakami <take@kwkm.org>
+ * @license MIT
+ */
 class Filter
 {
     private $filters;

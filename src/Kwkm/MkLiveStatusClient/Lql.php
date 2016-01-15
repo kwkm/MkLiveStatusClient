@@ -8,16 +8,22 @@ namespace Kwkm\MkLiveStatusClient;
  * @author Takehiro Kawakami <take@kwkm.org>
  * @license MIT
  */
-class Lql
+class Lql extends LqlAbstract
 {
-    private $table;
-    private $authUser;
-
-
     /**
      * @var \Kwkm\MkLiveStatusClient\LqlObject
      */
     private $lqlObject;
+
+    /**
+     * @var string
+     */
+    private $table;
+
+    /**
+     * @var string
+     */
+    private $authUser;
 
     /**
      * 初期化
@@ -38,13 +44,13 @@ class Lql
     /**
      * 取得カラムの指定
      *
-     * @param string $column
+     * @param Column $column
      * @return \Kwkm\MkLiveStatusClient\Lql
      * @throw \InvalidArgumentException if the provided argument is not of type 'string'.
      */
-    public function column($column)
+    public function column(Column $column)
     {
-        $this->lqlObject->appendColumns($column);
+        $this->lqlObject->setColumns($column->get());
 
         return $this;
     }
@@ -64,20 +70,6 @@ class Lql
     }
 
     /**
-     * 取得カラムの一括指定
-     *
-     * @param array $columns
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'array'.
-     */
-    public function columns($columns)
-    {
-        $this->lqlObject->setColumns($columns);
-
-        return $this;
-    }
-
-    /**
      * 任意のフィルタ設定
      *
      * @param \Kwkm\MkLiveStatusClient\Filter $filter
@@ -86,33 +78,20 @@ class Lql
      */
     public function filter(Filter $filter)
     {
-        $this->lqlObject->appendFilterQuery($filter);
+        $this->lqlObject->appendArrayQuery($filter->get());
 
         return $this;
     }
 
     /**
      * Stats の指定
-     * @param string $stats
+     * @param \Kwkm\MkLiveStatusClient\Stats $stats
      * @return \Kwkm\MkLiveStatusClient\Lql
      * @throw \InvalidArgumentException if the provided argument is not of type 'string'.
      */
-    public function stats($stats)
+    public function stats(Stats $stats)
     {
-        $this->lqlObject->appendStringQuery('Stats', $stats);
-
-        return $this;
-    }
-
-    /**
-     * StatsAnd の指定
-     * @param integer $statsAnd
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
-     */
-    public function statsAnd($statsAnd)
-    {
-        $this->lqlObject->appendIntegerQuery('StatsAnd', $statsAnd);
+        $this->lqlObject->appendArrayQuery($stats->get());
 
         return $this;
     }
