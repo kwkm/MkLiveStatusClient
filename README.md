@@ -225,5 +225,5 @@ $stats->equal('state', '0')
 $lql = new mk\Lql(mk\Table::SERVICES);
 $lql->stats($stats)->column($column);
 
-$result = $parser->get($client->execute($lql));
+$result = $parser->decode($client->execute($lql));
 ```

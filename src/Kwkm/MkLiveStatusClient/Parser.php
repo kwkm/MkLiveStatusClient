@@ -10,6 +10,11 @@ namespace Kwkm\MkLiveStatusClient;
  */
 class Parser
 {
+    public function decode($response)
+    {
+        return json_decode($response);
+    }
+
     /**
      * ヘッダをキーとした配列として読み込む
      *
@@ -18,7 +23,7 @@ class Parser
      */
     public function get($response)
     {
-        $json = json_decode($response);
+        $json = $this->decode($response);
         $header = array_shift($json);
         $result = array();
         foreach ($json as $row) {
