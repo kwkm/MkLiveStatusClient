@@ -169,7 +169,7 @@ $result = $parser->get($client->execute($lql));
 $lql = new mk\LqlBuilder(mk\Table::SERVICES);
 $lql->filterEqual('state', '2')
     ->filterEqual('acknowledged', '1')
-    ->filterAnd(2);
+    ->filterAnd(2)
     ->filterEqual('state', '0')
     ->filterOr(2);
 

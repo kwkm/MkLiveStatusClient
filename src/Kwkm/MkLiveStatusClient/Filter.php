@@ -26,7 +26,7 @@ class Filter
      */
     public function set($filter)
     {
-        $this->filters[] = sprintf("Filter: %s\n", trim($filter));
+        $this->filters[] = trim(sprintf("Filter: %s", trim($filter))) . "\n";
 
         return $this;
     }

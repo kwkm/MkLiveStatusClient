@@ -93,7 +93,7 @@ class LqlBuilder extends LqlAbstract
      */
     public function filter($filter)
     {
-        $this->lqlObject->appendStringQuery('Filter', $filter);
+        $this->lqlObject->appendStringQuery('Filter', trim($filter));
 
         return $this;
     }
