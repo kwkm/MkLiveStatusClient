@@ -20,6 +20,8 @@ class Column
     public function add($column)
     {
         $this->columns[] = $column;
+
+        return $this;
     }
 
     public function delete($column)
@@ -28,6 +30,8 @@ class Column
         if ($index !== null) {
             unset($this->columns[$index]);
         }
+
+        return $this;
     }
 
     public function get()
