@@ -341,7 +341,7 @@ EOF;
         $mock->filterMatch('name', 'a')
             ->filterMatch('name', 'o')
             ->filterOr(2)
-            ->negate();
+            ->filterNegate();
 
         $this->assertEquals(
             $lql,

@@ -134,6 +134,13 @@ class Stats
         return $this;
     }
 
+    public function negate()
+    {
+        $this->stats[] = "StatsNegate:\n";
+
+        return $this;
+    }
+
     public function reset()
     {
         $this->stats = array();

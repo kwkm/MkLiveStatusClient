@@ -402,13 +402,13 @@ EOF;
         $filter = new Filter();
         $filter->match('name', 'a')
             ->match('name', 'o')
-            ->operatorOr(2);
+            ->operatorOr(2)
+            ->negate();
 
         $mock = \TestMock::on(
             new Lql(Table::HOSTS)
         );
-        $mock->filter($filter)
-            ->negate();
+        $mock->filter($filter);
 
         $this->assertEquals(
             $lql,

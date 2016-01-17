@@ -183,7 +183,7 @@ $lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->filterMatch('name', 'a')
     ->filterMatch('name', 'o')
     ->filterOr(2)
-    ->negate();
+    ->filterNegate();
 
 $result = $parser->get($client->execute($lql));
 ```

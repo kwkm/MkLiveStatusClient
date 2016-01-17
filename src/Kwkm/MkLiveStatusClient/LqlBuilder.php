@@ -20,6 +20,7 @@ namespace Kwkm\MkLiveStatusClient;
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterGreaterEqual(String $column, String $value)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterOr(Integer $or)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterAnd(Integer $and)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterNegate()
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsSet(String $stats)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsEqual(String $column, String $value)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsNotEqual(String $column, String $value)
@@ -32,6 +33,7 @@ namespace Kwkm\MkLiveStatusClient;
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsAvginv(String $column)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsAnd(Integer $and)
  * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsOr(Integer $or)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsNegate()
  */
 class LqlBuilder extends LqlAbstract
 {
@@ -73,45 +75,32 @@ class LqlBuilder extends LqlAbstract
     public function __call($method, $arguments)
     {
         if (substr($method, 0, 5) === 'stats') {
-            $this->callStats($method, $arguments);
+            $this->callPropertyMethod(5, $method, $arguments);
 
             return $this;
         }
 
         if (substr($method, 0, 6) === 'filter') {
-            $this->callFilter($method, $arguments);
+            $this->callPropertyMethod(6, $method, $arguments);
             return $this;
         }
 
         trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
     }
 
-    private function callStats($method, $arguments)
+    private function callPropertyMethod($lengthProperty, $method, $arguments)
     {
-        $callMethod = lcfirst(substr($method, 5));
+        $property = substr($method, 0, $lengthProperty);
+        $callMethod = lcfirst(substr($method, $lengthProperty));
 
         if (($callMethod === 'or') || ($callMethod === 'and')) {
             $callMethod = 'operator' . ucfirst($callMethod);
         }
 
-        call_user_func_array(array($this->stats, $callMethod), $arguments);
+        call_user_func_array(array($this->$property, $callMethod), $arguments);
 
-        $this->lql->stats($this->stats);
-        $this->stats->reset();
-    }
-
-    private function callFilter($method, $arguments)
-    {
-        $callMethod = lcfirst(substr($method, 6));
-
-        if (($callMethod === 'or') || ($callMethod === 'and')) {
-            $callMethod = 'operator' . ucfirst($callMethod);
-        }
-
-        call_user_func_array(array($this->filter, $callMethod), $arguments);
-
-        $this->lql->filter($this->filter);
-        $this->filter->reset();
+        $this->lql->$property($this->$property);
+        $this->$property->reset();
     }
 
     /**
@@ -154,28 +143,6 @@ class LqlBuilder extends LqlAbstract
     {
         $this->column = new Column($columns);
         $this->lql->column($this->column);
-
-        return $this;
-    }
-
-    /**
-     * StatsNegate の指定
-     * @return \Kwkm\MkLiveStatusClient\LqlBuilder
-     */
-    public function statsNegate()
-    {
-        $this->lql->statsNegate();
-
-        return $this;
-    }
-
-    /**
-     * Negate の指定
-     * @return \Kwkm\MkLiveStatusClient\LqlBuilder
-     */
-    public function negate()
-    {
-        $this->lql->negate();
 
         return $this;
     }

@@ -97,28 +97,6 @@ class Lql extends LqlAbstract
     }
 
     /**
-     * StatsNegate の指定
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function statsNegate()
-    {
-        $this->lqlObject->appendNoValueQuery('StatsNegate');
-
-        return $this;
-    }
-
-    /**
-     * Negate の指定
-     * @return \Kwkm\MkLiveStatusClient\Lql
-     */
-    public function negate()
-    {
-        $this->lqlObject->appendNoValueQuery('Negate');
-
-        return $this;
-    }
-
-    /**
      * パラメータの指定
      * @param string $parameter
      * @return \Kwkm\MkLiveStatusClient\Lql

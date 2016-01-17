@@ -169,6 +169,13 @@ class Filter
         return $this;
     }
 
+    public function negate()
+    {
+        $this->filters[] = "Negate:\n";
+
+        return $this;
+    }
+
     public function reset()
     {
         $this->filters = array();
