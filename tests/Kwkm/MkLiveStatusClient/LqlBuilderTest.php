@@ -22,9 +22,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::CONTACTS, 'kwkm')
-        );
+        $mock = new LqlBuilder(Table::CONTACTS, 'kwkm');
         $mock->column('contact_name');
 
         $this->assertEquals(
@@ -44,9 +42,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::CONTACTS)
-        );
+        $mock = new LqlBuilder(Table::CONTACTS);
 
         $this->assertEquals(
             $lql,
@@ -68,9 +64,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::CONTACTS)
-        );
+        $mock = new LqlBuilder(Table::CONTACTS);
         $mock->columns(array('name', 'alias'));
 
         $this->assertEquals(
@@ -93,9 +87,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->columns(array('host_name', 'description', 'state'))
             ->filterEqual('state', '2');
 
@@ -120,9 +112,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->columns(array('host_name', 'description', 'state'))
             ->filterEqual('state', '2')
             ->filterEqual('in_notification_period', '1');
@@ -147,9 +137,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->columns(array('host_name', 'description', 'state', 'contacts'))
             ->filterGreaterEqual('contacts', 'harri');
 
@@ -173,9 +161,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::HOSTS)
-        );
+        $mock = new LqlBuilder(Table::HOSTS);
         $mock->column('name')
             ->filterEqual('parents', '');
 
@@ -199,9 +185,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::HOSTS)
-        );
+        $mock = new LqlBuilder(Table::HOSTS);
         $mock->columns(array('host_name', 'modified_attributes_list'))
             ->filterNotEqual('modified_attributes', '0');
 
@@ -226,9 +210,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::HOSTS)
-        );
+        $mock = new LqlBuilder(Table::HOSTS);
         $mock->columns(array('host_name', 'modified_attributes_list'))
             ->filterMatch('modified_attributes', 'notifications_enabled')
             ->filterEqual('notifications_enabled', '0');
@@ -253,11 +235,9 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::HOSTS)
-        );
+        $mock = new LqlBuilder(Table::HOSTS);
         $mock->columns(array('host_name', 'modified_attributes_list'))
-            ->filter('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
+            ->filterSet('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
 
         $this->assertEquals(
             $lql,
@@ -279,9 +259,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->filterEqual('state', '1')
             ->filterEqual('state', '3')
             ->filterOr(2);
@@ -306,9 +284,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->filterGreater('scheduled_downtime_depth', '0')
             ->filterGreater('host_scheduled_downtime_depth', '0')
             ->filterOr(2);
@@ -335,9 +311,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->filterEqual('state', '2')
             ->filterEqual('acknowledged', '1')
             ->filterAnd(2)
@@ -365,9 +339,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::HOSTS)
-        );
+        $mock = new LqlBuilder(Table::HOSTS);
         $mock->filterMatch('name', 'a')
             ->filterMatch('name', 'o')
             ->filterOr(2)
@@ -394,9 +366,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->statsEqual('state', '0')
             ->statsEqual('state', '1')
             ->statsEqual('state', '2')
@@ -424,9 +394,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->statsEqual('state', '0')
             ->statsEqual('state', '1')
             ->statsEqual('state', '2')
@@ -473,9 +441,7 @@ ResponseHeader: fixed16
 
 EOF;
 
-        $mock = \TestMock::on(
-            new LqlBuilder(Table::SERVICES)
-        );
+        $mock = new LqlBuilder(Table::SERVICES);
         $mock->filterGreaterEqual('host_groups', 'windows')
             ->filterEqual('scheduled_downtime_depth', '0')
             ->filterEqual('host_scheduled_downtime_depth', '0')

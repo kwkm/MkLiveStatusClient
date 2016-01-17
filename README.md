@@ -134,7 +134,7 @@ $result = $parser->get($client->execute($lql));
 ```PHP
 $lql = new mk\LqlBuilder(mk\Table::HOSTS);
 $lql->columns(array('host_name', 'modified_attributes_list'))
-    ->filter('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
+    ->filterSet('modified_attributes ~~ active_checks_enabled,passive_checks_enabled');
 
 $result = $parser->get($client->execute($lql));
 ```
