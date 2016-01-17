@@ -4,8 +4,6 @@ namespace Kwkm\MkLiveStatusClient\Tests;
 use Kwkm\MkLiveStatusClient\LqlBuilder;
 use Kwkm\MkLiveStatusClient\Table;
 
-require_once __DIR__ . '/../../bootstrap.php';
-
 class LqlBuilderTest extends \PHPUnit_Framework_TestCase
 {
 

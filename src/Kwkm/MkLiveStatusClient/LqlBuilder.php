@@ -8,6 +8,30 @@ namespace Kwkm\MkLiveStatusClient;
  * @package Kwkm\MkLiveStatusClient
  * @author Takehiro Kawakami <take@kwkm.org>
  * @license MIT
+ *
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterSet(String $filter)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterMatch(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterNotEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterNotMatch(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterLess(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterGreater(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterLessEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterGreaterEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterOr(Integer $or)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder filterAnd(Integer $and)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsSet(String $stats)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsNotEqual(String $column, String $value)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsSum(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsMin(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsMax(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsAvg(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsStd(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsSuminv(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsAvginv(String $column)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsAnd(Integer $and)
+ * @method \Kwkm\MkLiveStatusClient\LqlBuilder statsOr(Integer $or)
  */
 class LqlBuilder extends LqlAbstract
 {
@@ -49,36 +73,45 @@ class LqlBuilder extends LqlAbstract
     public function __call($method, $arguments)
     {
         if (substr($method, 0, 5) === 'stats') {
-            $callMethod = lcfirst(substr($method, 5));
-
-            if (($callMethod === 'or') || ($callMethod === 'and')) {
-                $callMethod = 'operator' . ucfirst($callMethod);
-            }
-
-            call_user_func_array(array($this->stats, $callMethod), $arguments);
-
-            $this->lql->stats($this->stats);
-            $this->stats->reset();
+            $this->callStats($method, $arguments);
 
             return $this;
         }
 
         if (substr($method, 0, 6) === 'filter') {
-            $callMethod = lcfirst(substr($method, 6));
-
-            if (($callMethod === 'or') || ($callMethod === 'and')) {
-                $callMethod = 'operator' . ucfirst($callMethod);
-            }
-
-            call_user_func_array(array($this->filter, $callMethod), $arguments);
-
-            $this->lql->filter($this->filter);
-            $this->filter->reset();
-
+            $this->callFilter($method, $arguments);
             return $this;
         }
 
         trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
+    }
+
+    private function callStats($method, $arguments)
+    {
+        $callMethod = lcfirst(substr($method, 5));
+
+        if (($callMethod === 'or') || ($callMethod === 'and')) {
+            $callMethod = 'operator' . ucfirst($callMethod);
+        }
+
+        call_user_func_array(array($this->stats, $callMethod), $arguments);
+
+        $this->lql->stats($this->stats);
+        $this->stats->reset();
+    }
+
+    private function callFilter($method, $arguments)
+    {
+        $callMethod = lcfirst(substr($method, 6));
+
+        if (($callMethod === 'or') || ($callMethod === 'and')) {
+            $callMethod = 'operator' . ucfirst($callMethod);
+        }
+
+        call_user_func_array(array($this->filter, $callMethod), $arguments);
+
+        $this->lql->filter($this->filter);
+        $this->filter->reset();
     }
 
     /**
