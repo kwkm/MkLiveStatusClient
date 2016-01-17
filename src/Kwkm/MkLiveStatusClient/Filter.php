@@ -10,6 +10,9 @@ namespace Kwkm\MkLiveStatusClient;
  */
 class Filter
 {
+    /**
+     * @var array
+     */
     private $filters;
 
     public function __construct()
@@ -169,6 +172,10 @@ class Filter
         return $this;
     }
 
+    /**
+     * Negate の指定
+     * @return \Kwkm\MkLiveStatusClient\Filter
+     */
     public function negate()
     {
         $this->filters[] = "Negate:\n";
@@ -176,11 +183,21 @@ class Filter
         return $this;
     }
 
+    /**
+     * Reset filter
+     * @return \Kwkm\MkLiveStatusClient\Filter
+     */
     public function reset()
     {
         $this->filters = array();
+
+        return $this;
     }
 
+    /**
+     * Get filter
+     * @return array
+     */
     public function get()
     {
         return $this->filters;

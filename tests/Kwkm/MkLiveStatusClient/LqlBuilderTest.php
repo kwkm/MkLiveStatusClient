@@ -30,6 +30,34 @@ EOF;
         );
     }
 
+    public function testCsvLimit()
+    {
+        $lql = <<<EOF
+GET contacts
+Columns: contact_name
+ColumnHeaders: off
+Separators: 10 44 59 124
+OutputFormat: csv
+Limit: 5
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::CONTACTS);
+        $mock->column('contact_name')
+            ->headers(false)
+            ->outputFormat('csv')
+            ->parameter('Separators: 10 44 59 124')
+            ->limit(5);
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'check OutputFormat & Limit.'
+        );
+    }
+
     public function testReadme1()
     {
         $lql = <<<EOF

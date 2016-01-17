@@ -70,7 +70,7 @@ class Lql extends LqlAbstract
     }
 
     /**
-     * 任意のフィルタ設定
+     * フィルタの指定
      *
      * @param \Kwkm\MkLiveStatusClient\Filter $filter
      * @return \Kwkm\MkLiveStatusClient\Lql

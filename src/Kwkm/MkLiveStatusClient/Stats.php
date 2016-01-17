@@ -18,7 +18,7 @@ class Stats
     }
 
     /**
-     * 任意のフィルタ設定
+     * 任意のStats設定
      *
      * @param string $stats
      * @return \Kwkm\MkLiveStatusClient\Stats
@@ -32,10 +32,10 @@ class Stats
     }
 
     /**
-     * column = value のフィルタ設定
+     * column = value のStats設定
      *
      * @param string $column カラム名
-     * @param string $value フィルタする値
+     * @param string $value Statsする値
      * @return \Kwkm\MkLiveStatusClient\Stats
      */
     public function equal($column, $value)
@@ -46,10 +46,10 @@ class Stats
     }
 
     /**
-     * column != value のフィルタ設定
+     * column != value のStats設定
      *
      * @param string $column カラム名
-     * @param string $value フィルタする値
+     * @param string $value Statsする値
      * @return \Kwkm\MkLiveStatusClient\Stats
      */
     public function notEqual($column, $value)
@@ -59,6 +59,11 @@ class Stats
         );
     }
 
+    /**
+     * 合計値の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function sum($column)
     {
         return $this->set(
@@ -66,6 +71,11 @@ class Stats
         );
     }
 
+    /**
+     * 最小値の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function min($column)
     {
         return $this->set(
@@ -73,6 +83,11 @@ class Stats
         );
     }
 
+    /**
+     * 最大値の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function max($column)
     {
         return $this->set(
@@ -80,6 +95,11 @@ class Stats
         );
     }
 
+    /**
+     * 平均値の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function avg($column)
     {
         return $this->set(
@@ -87,6 +107,11 @@ class Stats
         );
     }
 
+    /**
+     * 標準偏差の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function std($column)
     {
         return $this->set(
@@ -94,6 +119,11 @@ class Stats
         );
     }
 
+    /**
+     * 合計値の逆数の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function suminv($column)
     {
         return $this->set(
@@ -101,6 +131,11 @@ class Stats
         );
     }
 
+    /**
+     * 平均値の逆数の集計
+     * @param string $column カラム名
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     */
     public function avginv($column)
     {
         return $this->set(
@@ -134,6 +169,11 @@ class Stats
         return $this;
     }
 
+    /**
+     * StatsNegate の指定
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
+     */
     public function negate()
     {
         $this->stats[] = "StatsNegate:\n";
@@ -141,11 +181,21 @@ class Stats
         return $this;
     }
 
+    /**
+     * Statsのリセット
+     * @return $this
+     */
     public function reset()
     {
         $this->stats = array();
+
+        return $this;
     }
 
+    /**
+     * Get Stats
+     * @return array
+     */
     public function get()
     {
         return $this->stats;
