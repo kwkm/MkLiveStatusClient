@@ -9,12 +9,20 @@ build:
 filter:
     paths: ["src/*"]
 tools:
-    external_code_coverage: true
-    php_code_coverage: true
-    php_mess_detector: true
-    php_pdepend: true
-    php_analyzer: true
-    php_cpd: true
+    php_sim:
+        enabled: true
+        min_mass: 16
+    php_pdepend:
+        enabled: true
+        configuration_file: null
+        suffixes:
+            - php
+    php_analyzer:
+        enabled: true
+        extensions:
+            - php
+    sensiolabs_security_checker:
+        enabled: true
     php_mess_detector:
         enabled: true
         config:
