@@ -6,8 +6,33 @@ use Kwkm\MkLiveStatusClient\Table;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-class OptionParserTest extends \PHPUnit_Framework_TestCase
+class LqlBuilderTest extends \PHPUnit_Framework_TestCase
 {
+
+    public function testAuth()
+    {
+        $lql = <<<EOF
+GET contacts
+Columns: contact_name
+ColumnHeaders: on
+OutputFormat: json
+AuthUser: kwkm
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = \TestMock::on(
+            new LqlBuilder(Table::CONTACTS, 'kwkm')
+        );
+        $mock->column('contact_name');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'check AuthUser.'
+        );
+    }
 
     public function testReadme1()
     {
