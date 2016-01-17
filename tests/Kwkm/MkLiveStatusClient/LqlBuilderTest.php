@@ -471,4 +471,141 @@ EOF;
         );
     }
 
+    public function testReadme17()
+    {
+        $lql = <<<EOF
+GET services
+Columns: host_name
+ColumnHeaders: on
+Filter: host_groups >= windows
+Stats: state = 0
+Stats: state = 1
+Stats: state = 2
+Stats: state = 3
+OutputFormat: json
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::SERVICES);
+        $mock->filterGreaterEqual('host_groups', 'windows')
+            ->statsEqual('state', '0')
+            ->statsEqual('state', '1')
+            ->statsEqual('state', '2')
+            ->statsEqual('state', '3')
+            ->column('host_name');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'The number of services in the various states for each host in the host group windows.'
+        );
+    }
+
+    public function testReadme18()
+    {
+        $lql = <<<EOF
+GET services
+Columns: check_command
+ColumnHeaders: on
+Stats: state != 9999
+OutputFormat: json
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::SERVICES);
+        $mock->statsNotEqual('state', '9999')
+            ->column('check_command');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'Counts the total number of services grouped by the check command.'
+        );
+    }
+
+    public function testReadme19()
+    {
+        $lql = <<<EOF
+GET services
+Columns: state
+ColumnHeaders: on
+Stats: state != 9999
+OutputFormat: json
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::SERVICES);
+        $mock->statsNotEqual('state', '9999')
+            ->column('state');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'Counting the total number of services grouped by their states.'
+        );
+    }
+
+    public function testReadme20()
+    {
+        $lql = <<<EOF
+GET services
+Filter: state = 0
+Stats: min execution_time
+Stats: max execution_time
+Stats: avg execution_time
+OutputFormat: json
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::SERVICES);
+        $mock->filterEqual('state', '0')
+            ->statsMin('execution_time')
+            ->statsMax('execution_time')
+            ->statsAvg('execution_time');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'Minimum, maximum and average check execution time of all service checks in state OK.'
+        );
+    }
+
+    public function testReadme21()
+    {
+        $lql = <<<EOF
+GET services
+Columns: host_name
+ColumnHeaders: on
+Filter: state = 0
+Stats: min execution_time
+Stats: max execution_time
+Stats: avg execution_time
+OutputFormat: json
+ResponseHeader: fixed16
+
+
+EOF;
+
+        $mock = new LqlBuilder(Table::SERVICES);
+        $mock->filterEqual('state', '0')
+            ->statsMin('execution_time')
+            ->statsMax('execution_time')
+            ->statsAvg('execution_time')
+            ->column('host_name');
+
+        $this->assertEquals(
+            $lql,
+            $mock->build(),
+            'Grouping host_name.'
+        );
+    }
+
 }

@@ -246,6 +246,67 @@ $lql->filterGreaterEqual('host_groups', 'windows')
 $result = $parser->decode($client->execute($lql));
 ```
 
+#### The number of services in the various states for each host in the host group windows.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterGreaterEqual('host_groups', 'windows')
+    ->statsEqual('state', '0')
+    ->statsEqual('state', '1')
+    ->statsEqual('state', '2')
+    ->statsEqual('state', '3')
+    ->column('host_name');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+#### Counts the total number of services grouped by the check command.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->statsNotEqual('state', '9999')
+    ->column('check_command');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+#### Counting the total number of services grouped by their states.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->statsNotEqual('state', '9999')
+    ->column('state');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+### Sum, Minimum, Maximum, Average, Standard Deviation.
+
+#### Minimum, maximum and average check execution time of all service checks in state OK.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterEqual('state', '0')
+    ->statsMin('execution_time')
+    ->statsMax('execution_time')
+    ->statsAvg('execution_time');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+#### Grouping host_name.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterEqual('state', '0')
+    ->statsMin('execution_time')
+    ->statsMax('execution_time')
+    ->statsAvg('execution_time')
+    ->column('host_name');
+
+$result = $parser->decode($client->execute($lql));
+```
+
 
 
 ## Example - Lql
