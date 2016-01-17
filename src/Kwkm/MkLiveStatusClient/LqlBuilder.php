@@ -265,6 +265,19 @@ class LqlBuilder extends LqlAbstract
     }
 
     /**
+     * StatsOr の指定
+     * @param integer $statsAnd
+     * @return \Kwkm\MkLiveStatusClient\LqlBuilder
+     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
+     */
+    public function statsOr($statsOr)
+    {
+        $this->lqlObject->appendIntegerQuery('StatsOr', $statsOr);
+
+        return $this;
+    }
+
+    /**
      * StatsNegate の指定
      * @return \Kwkm\MkLiveStatusClient\LqlBuilder
      */

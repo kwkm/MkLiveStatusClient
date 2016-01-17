@@ -121,6 +121,19 @@ class Stats
         return $this;
     }
 
+    /**
+     * StatsOr の指定
+     * @param integer $or
+     * @return \Kwkm\MkLiveStatusClient\Stats
+     * @throw \InvalidArgumentException if the provided argument is not of type 'integer'.
+     */
+    public function operatorOr($or)
+    {
+        $this->stats[] = sprintf("StatsOr: %d\n", $or);
+
+        return $this;
+    }
+
     public function reset()
     {
         $this->stats = array();

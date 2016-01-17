@@ -188,6 +188,66 @@ $lql->filterMatch('name', 'a')
 $result = $parser->get($client->execute($lql));
 ```
 
+### Stats and Counts.
+
+#### The numbers of services which are OK, WARN, CRIT or UNKNOWN.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->statsEqual('state', '0')
+    ->statsEqual('state', '1')
+    ->statsEqual('state', '2')
+    ->statsEqual('state', '3');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+#### The output to services to which the contact harri.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->statsEqual('state', '0')
+    ->statsEqual('state', '1')
+    ->statsEqual('state', '2')
+    ->statsEqual('state', '3')
+    ->filterGreaterEqual('contacts', 'harri');
+
+$result = $parser->decode($client->execute($lql));
+```
+
+#### Combining with and/or.
+
+```PHP
+$lql = new mk\LqlBuilder(mk\Table::SERVICES);
+$lql->filterGreaterEqual('host_groups', 'windows')
+    ->filterEqual('scheduled_downtime_depth', '0')
+    ->filterEqual('host_scheduled_downtime_depth', '0')
+    ->filterEqual('in_notification_period', '1')
+    ->statsEqual('last_hard_state', '0')
+    ->statsEqual('last_hard_state', '1')
+    ->statsEqual('acknowledged', '0')
+    ->statsAnd(2)
+    ->statsEqual('last_hard_state', '1')
+    ->statsEqual('acknowledged', '1')
+    ->statsAnd(2)
+    ->statsEqual('last_hard_state', '2')
+    ->statsEqual('acknowledged', '0')
+    ->statsAnd(2)
+    ->statsEqual('last_hard_state', '2')
+    ->statsEqual('acknowledged', '1')
+    ->statsAnd(2)
+    ->statsEqual('last_hard_state', '3')
+    ->statsEqual('acknowledged', '0')
+    ->statsAnd(2)
+    ->statsEqual('last_hard_state', '3')
+    ->statsEqual('acknowledged', '1')
+    ->statsAnd(2);
+
+$result = $parser->decode($client->execute($lql));
+```
+
+
+
 ## Example - Lql
 
 ```PHP
