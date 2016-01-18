@@ -85,7 +85,7 @@ class LqlBuilder extends LqlAbstract
             return $this;
         }
 
-        trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
+        throw new \BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method);
     }
 
     private function callPropertyMethod($lengthProperty, $method, $arguments)
@@ -97,7 +97,11 @@ class LqlBuilder extends LqlAbstract
             $callMethod = 'operator' . ucfirst($callMethod);
         }
 
-        call_user_func_array(array($this->$property, $callMethod), $arguments);
+        if (method_exists($this->$property, $callMethod)) {
+            call_user_func_array(array($this->$property, $callMethod), $arguments);
+        } else {
+            throw new \BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method);
+        }
 
         $this->lql->$property($this->$property);
         $this->$property->reset();

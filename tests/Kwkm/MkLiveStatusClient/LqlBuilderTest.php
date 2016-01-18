@@ -6,6 +6,29 @@ use Kwkm\MkLiveStatusClient\Table;
 
 class LqlBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    public function testUnknownMethod()
+    {
+        $mock = new LqlBuilder(Table::CONTACTS);
+        try {
+            $mock->fooBar();
+        } catch (\BadMethodCallException $e) {
+            return;
+        }
+        
+        $this->fail('An expected exception has not been raised.');
+    }
+
+    public function testUnknownFilterMethod()
+    {
+        $mock = new LqlBuilder(Table::CONTACTS);
+        try {
+            $mock->filterHogeHoge();
+        } catch (\BadMethodCallException $e) {
+            return;
+        }
+        
+        $this->fail('An expected exception has not been raised.');
+    }
 
     public function testAuth()
     {
