@@ -1,0 +1,33 @@
+build:
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit'
+                coverage:
+                    file: build/logs/clover.xml
+                    format: php-clover
+filter:
+    paths: ["src/*"]
+tools:
+    php_sim:
+        enabled: true
+        min_mass: 16
+    php_pdepend:
+        enabled: true
+        configuration_file: null
+        suffixes:
+            - php
+    php_analyzer:
+        enabled: true
+        extensions:
+            - php
+    sensiolabs_security_checker:
+        enabled: true
+    php_mess_detector:
+        enabled: true
+        config:
+            ruleset: ./phpmd.xml
+    php_code_sniffer:
+        enabled: true
+        config:
+            ruleset: ./phpcs.xml

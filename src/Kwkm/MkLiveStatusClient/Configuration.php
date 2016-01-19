@@ -1,7 +1,6 @@
 <?php
 namespace Kwkm\MkLiveStatusClient;
 
-use \BadFunctionCallException;
 use \InvalidArgumentException;
 
 /**
@@ -58,10 +57,6 @@ class Configuration
      */
     public function __construct(array $conf)
     {
-        if (!function_exists("socket_create")) {
-            throw new BadFunctionCallException("The PHP function socket_create is not available.");
-        }
-
         $this->assignProperty($conf);
 
         $this->validateProperty();

@@ -7,13 +7,17 @@
     ],
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/kwkm/mkLiveStatusClient",
+    "homepage": "https://github.com/kwkm/MkLiveStatusClient",
     "authors": [
         {
             "name": "Takehiro Kawakami",
             "email": "take@kwkm.org"
         }
     ],
+    "require-dev": {
+        "phpunit/phpunit": "4.5.*",
+        "satooshi/php-coveralls": "1.0.*"
+    },
     "autoload": {
         "psr-4": {
             "Kwkm\\MkLiveStatusClient\\": "src/Kwkm/MkLiveStatusClient/"

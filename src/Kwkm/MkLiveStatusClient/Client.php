@@ -28,13 +28,13 @@ class Client
     /**
      * コンストラクタ
      *
-     * @param array $conf
+     * @param Configuration $conf
      * @throw \BadFunctionCallException
      * @throw \InvalidArgumentException
      */
-    public function __construct(array $conf)
+    public function __construct(Configuration $conf)
     {
-        $this->config = new Configuration($conf);
+        $this->config = $conf;
 
         $this->reset();
     }
@@ -42,17 +42,17 @@ class Client
     /**
      * Lqlの実行
      *
-     * @param \Kwkm\MkLiveStatusClient\Lql $lql
+     * @param \Kwkm\MkLiveStatusClient\LqlAbstract $lql
      * @return array
      * @throw \RuntimeException
      */
-    public function execute(Lql $lql)
+    public function execute(LqlAbstract $lql)
     {
         $result = $this->executeRequest($lql->build());
 
         $this->verifyStatusCode($result);
 
-        $response = json_decode(utf8_encode($result['response']));
+        $response = utf8_encode($result['response']);
 
         if (is_null($response)) {
             throw new RuntimeException("The response was invalid.");

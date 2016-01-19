@@ -84,6 +84,11 @@ class LqlObject
         $this->columns[] = trim($column);
     }
 
+    public function appendArrayQuery(array $array)
+    {
+        $this->queries = array_merge($this->queries, $array);
+    }
+
     public function appendStringQuery($name, $value)
     {
         if (!is_string($value)) {
