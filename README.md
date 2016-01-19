@@ -1,9 +1,9 @@
 # mkLivestatus Client
 
 [![License](https://poser.pugx.org/passet/passet/license.svg)](https://packagist.org/packages/passet/passet)
-[![Build Status](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/build.png?b=2.0-dev)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/build-status/2.0-dev)
-[![Code Coverage](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/coverage.png?b=2.0-dev)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/?branch=2.0-dev)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/quality-score.png?b=2.0-dev)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/?branch=2.0-dev)
+[![Build Status](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/build.png?b=master)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kwkm/MkLiveStatusClient/?branch=master)
 
 ## Client Setting.
 

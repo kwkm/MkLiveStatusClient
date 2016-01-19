@@ -47,6 +47,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->fail('An expected exception has not been raised.');
     }
 
+    public function testSuccessSocketFile()
+    {
+        try {
+            $mock = new Configuration(array(
+                'socketType' => 'unix',
+                'socketPath' => __DIR__ . '/../testSocketFile',
+            ));
+
+            return;
+        } catch (InvalidArgumentException $e) {
+            $this->fail('SocketFile Error.');
+
+            return;
+        }
+
+    }
+
     public function testNonSocketFile()
     {
         try {
