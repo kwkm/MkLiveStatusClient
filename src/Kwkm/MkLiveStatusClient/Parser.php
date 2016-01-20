@@ -12,7 +12,7 @@ class Parser
 {
     public function decode($response)
     {
-        return json_decode($response);
+        return json_decode($response, true);
     }
 
     /**

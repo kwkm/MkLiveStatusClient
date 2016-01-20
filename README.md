@@ -14,7 +14,7 @@ use Kwkm\MkLiveStatusClient as mk;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$config = new mk\Configration(
+$config = new mk\Configuration(
     array(
         'socketType' => 'unix',
         'socketPath' => '/var/run/nagios/rw/live',
@@ -33,7 +33,7 @@ use Kwkm\MkLiveStatusClient as mk;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$config = new mk\Configration(
+$config = new mk\Configuration(
     array(
         'socketType' => 'tcp',
         'socketAddress' => '192.168.0.100',
