@@ -6,6 +6,12 @@
         </testsuite>
     </testsuites>
 
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
+
     <logging>
         <log type="coverage-html" target="build/logs/coverage" title="PHPUnit"
              charset="UTF-8" yui="true" highlight="true"
