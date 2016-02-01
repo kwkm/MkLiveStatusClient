@@ -97,12 +97,11 @@ class LqlBuilder extends LqlAbstract
             $callMethod = 'operator' . ucfirst($callMethod);
         }
 
-        if (method_exists($this->$property, $callMethod)) {
-            call_user_func_array(array($this->$property, $callMethod), $arguments);
-        } else {
+        if (false === method_exists($this->$property, $callMethod)) {
             throw new \BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method);
         }
 
+        call_user_func_array(array($this->$property, $callMethod), $arguments);
         $this->lql->$property($this->$property);
         $this->$property->reset();
     }

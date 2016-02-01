@@ -66,9 +66,9 @@ class Configuration
     {
         if (property_exists($this, $property)) {
             return $this->{$property};
-        } else {
-            throw new InvalidArgumentException("The option '$property' is not recognised.");
         }
+
+        throw new InvalidArgumentException("The option '$property' is not recognised.");
     }
 
     /**
@@ -79,12 +79,22 @@ class Configuration
     private function assignProperty($conf)
     {
         foreach ($conf as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            } else {
-                throw new InvalidArgumentException("The option '$key' is not recognised.");
-            }
+            $this->setProperty($key, $value);
         }
+    }
+
+    /**
+     * プロパティに値をセット
+     * @param $property
+     * @param $value
+     */
+    private function setProperty($property, $value)
+    {
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
+        }
+
+        throw new InvalidArgumentException("The option '$property' is not recognised.");
     }
 
     /**
