@@ -36,5 +36,4 @@ class Parser
 
         return $result;
     }
-
 }

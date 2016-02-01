@@ -7,11 +7,11 @@ use \InvalidArgumentException;
  * Class Configuration
  *
  * @package Kwkm\MkLiveStatusClient
- * @property-read string      $socketType       接続方式(unix or tcp)
- * @property-read string      $socketPath       ソケットファイル
- * @property-read string      $socketAddress    TCP接続時のIPアドレス
- * @property-read string      $socketPort       TCP接続時のポート
- * @property-read array       $socketTimeout    TCP接続時のタイムアウト秒数
+ * @property-read string $socketType      接続方式(unix or tcp)
+ * @property-read string $socketPath      ソケットファイル
+ * @property-read string $socketAddress   TCP接続時のIPアドレス
+ * @property-read string $socketPort      TCP接続時のポート
+ * @property-read array $socketTimeout    TCP接続時のタイムアウト秒数
  * @author Takehiro Kawakami <take@kwkm.org>
  * @license MIT
  */
@@ -122,7 +122,9 @@ class Configuration
     private function checkAccessSocketPath()
     {
         if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
-            throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
+            throw new InvalidArgumentException(
+                "The supplied socketPath '{$this->socketPath}' is not accessible to this script."
+            );
         }
     }
 

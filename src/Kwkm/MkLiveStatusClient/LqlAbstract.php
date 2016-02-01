@@ -1,7 +1,5 @@
 <?php
-
 namespace Kwkm\MkLiveStatusClient;
-
 
 /**
  * Class LqlAbstract
