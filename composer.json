@@ -16,7 +16,11 @@
     ],
     "require-dev": {
         "phpunit/phpunit": "4.5.*",
-        "satooshi/php-coveralls": "1.0.*"
+        "satooshi/php-coveralls": "1.0.*",
+        "phing/phing": "^2.13",
+        "squizlabs/php_codesniffer": "^2.5",
+        "phpmd/phpmd": "^2.3",
+        "apigen/apigen": "^4.1"
     },
     "autoload": {
         "psr-4": {
