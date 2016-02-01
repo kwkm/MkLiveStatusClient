@@ -90,11 +90,11 @@ class Configuration
      */
     private function setProperty($property, $value)
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
+        if (false === property_exists($this, $property)) {
+            throw new InvalidArgumentException("The option '$property' is not recognised.");
         }
 
-        throw new InvalidArgumentException("The option '$property' is not recognised.");
+        $this->{$property} = $value;
     }
 
     /**
